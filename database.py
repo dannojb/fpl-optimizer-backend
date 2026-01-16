@@ -17,10 +17,14 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fpl_optimizer.db")
 
 # Create SQLAlchemy engine
+# Only add connect_args for SQLite
+connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
-    echo=False  # Set to True for SQL query logging during development
+    connect_args=connect_args,
+    echo=False,  # Set to True for SQL query logging during development
+    pool_pre_ping=True  # Verify connections before using them
 )
 
 # Create session local class
