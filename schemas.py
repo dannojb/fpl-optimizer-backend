@@ -59,6 +59,7 @@ class OptimizationResponse(BaseModel):
 class TeamResponse(BaseModel):
     """Response schema for team fetch endpoint."""
     team_id: int
+    team_name: str
     players: List[PlayerBase]
     team_value: float = Field(..., description="Total team value in millions")
     total_points: int

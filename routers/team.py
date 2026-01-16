@@ -102,10 +102,14 @@ async def get_team(
     team_value = sum(p.now_cost for p in players) / 10.0  # Convert to millions
     total_points = sum(p.total_points for p in players)
 
-    logger.info(f"Team {team_id} fetched successfully: {len(players)} players, £{team_value:.1f}m value")
+    # Extract team name from FPL API response
+    team_name = team_data.get('name', f'Team {team_id}')
+
+    logger.info(f"Team {team_id} ({team_name}) fetched successfully: {len(players)} players, £{team_value:.1f}m value")
 
     return TeamResponse(
         team_id=team_id,
+        team_name=team_name,
         players=players,
         team_value=team_value,
         total_points=total_points
