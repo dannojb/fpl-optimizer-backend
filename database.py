@@ -16,6 +16,10 @@ load_dotenv()
 # Database URL from environment variable
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fpl_optimizer.db")
 
+# Railway provides postgres:// but SQLAlchemy 1.4+ requires postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # Create SQLAlchemy engine
 # Only add connect_args for SQLite
 connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
