@@ -74,10 +74,10 @@ async def root():
         "health": "/health"
     }
 
-# Import routers (will be added in subsequent stories)
-# from routers import team, optimize
-# app.include_router(team.router, prefix="/api", tags=["team"])
-# app.include_router(optimize.router, prefix="/api", tags=["optimize"])
+# Import routers
+from routers import team, optimize
+app.include_router(team.router, prefix="/api", tags=["team"])
+app.include_router(optimize.router, prefix="/api", tags=["optimize"])
 
 if __name__ == "__main__":
     import uvicorn
