@@ -5,7 +5,7 @@ FastAPI backend for FPL team optimization and recommendations.
 Integrates with official FPL API to fetch real player data.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -46,7 +46,7 @@ app.add_middleware(
 # Health check endpoint
 @app.get("/health")
 @limiter.limit("60/minute")
-async def health_check(request):
+async def health_check(request: Request):
     """
     Health check endpoint for monitoring.
 
