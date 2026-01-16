@@ -74,52 +74,6 @@ async def root():
         "health": "/health"
     }
 
-@app.get("/debug")
-async def debug_endpoint():
-    """
-    TEMPORARY debug endpoint to diagnose issues.
-    """
-    from database import get_db, DATABASE_URL, engine
-    from services.fpl_client import FPLClient
-    import traceback
-
-    result = {
-        "database_url": DATABASE_URL[:50] + "..." if len(DATABASE_URL) > 50 else DATABASE_URL,
-        "tests": {}
-    }
-
-    # Test 1: Database connection
-    try:
-        db = next(get_db())
-        result["tests"]["database_connection"] = "SUCCESS"
-        db.close()
-    except Exception as e:
-        result["tests"]["database_connection"] = f"FAILED: {str(e)}"
-        result["tests"]["database_traceback"] = traceback.format_exc()
-
-    # Test 2: FPL API connection
-    try:
-        fpl_client = FPLClient()
-        bootstrap = await fpl_client.get_bootstrap_static()
-        if bootstrap:
-            result["tests"]["fpl_api"] = f"SUCCESS: {len(bootstrap.get('elements', []))} players"
-        else:
-            result["tests"]["fpl_api"] = "FAILED: No data returned"
-    except Exception as e:
-        result["tests"]["fpl_api"] = f"FAILED: {str(e)}"
-        result["tests"]["fpl_traceback"] = traceback.format_exc()
-
-    # Test 3: Check if tables exist
-    try:
-        from sqlalchemy import inspect
-        inspector = inspect(engine)
-        tables = inspector.get_table_names()
-        result["tests"]["tables"] = f"Found {len(tables)} tables: {', '.join(tables)}"
-    except Exception as e:
-        result["tests"]["tables"] = f"FAILED: {str(e)}"
-
-    return result
-
 # Import routers
 from routers import team, optimize
 app.include_router(team.router, prefix="/api", tags=["team"])
