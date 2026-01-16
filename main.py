@@ -74,32 +74,6 @@ async def root():
         "health": "/health"
     }
 
-@app.get("/init-db")
-async def initialize_database():
-    """
-    TEMPORARY endpoint to initialize database tables.
-
-    This endpoint should be called once after deployment to create all database tables.
-    Remove this endpoint after successful initialization for security.
-
-    Returns:
-        dict: Success or error message
-    """
-    try:
-        from database import engine
-        from models import Base
-        Base.metadata.create_all(bind=engine)
-        return {
-            "status": "success",
-            "message": "Database tables created successfully!",
-            "note": "REMOVE THIS ENDPOINT after initialization for security"
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Error creating database tables: {str(e)}"
-        }
-
 # Import routers
 from routers import team, optimize
 app.include_router(team.router, prefix="/api", tags=["team"])
