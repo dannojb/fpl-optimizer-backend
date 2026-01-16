@@ -4,10 +4,8 @@ Team Router
 API endpoints for fetching FPL team data.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 import logging
 
 from database import get_db
@@ -19,15 +17,13 @@ import crud
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/team/{team_id}", response_model=TeamResponse)
-@limiter.limit("10/minute")
 async def get_team(
     team_id: int,
-    db: Session = Depends(get_db),
-    request=None  # Required for rate limiting
+    request: Request,
+    db: Session = Depends(get_db)
 ):
     """
     Fetch FPL team data by team ID.

@@ -4,10 +4,8 @@ Optimization Router
 API endpoints for generating transfer recommendations.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 import logging
 import time
 
@@ -21,15 +19,13 @@ import crud
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/optimize", response_model=OptimizationResponse)
-@limiter.limit("5/minute")  # More restrictive since this is compute-intensive
 async def optimize_team(
     request_body: OptimizationRequest,
-    db: Session = Depends(get_db),
-    request=None  # Required for rate limiting
+    request: Request,
+    db: Session = Depends(get_db)
 ):
     """
     Generate transfer recommendations for a team.
